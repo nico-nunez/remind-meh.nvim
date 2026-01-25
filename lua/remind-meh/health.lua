@@ -1,7 +1,7 @@
 local M = {}
 
 M.check = function()
-  vim.health.start("todos.nvim")
+  vim.health.start("remind-meh.nvim")
 
   -- Check Neovim version
   local nvim_version = vim.version()
@@ -42,23 +42,23 @@ M.check = function()
     vim.health.ok("grep available as fallback")
   else
     if vim.fn.executable("rg") ~= 1 then
-      vim.health.error("Neither ripgrep nor grep found", "Install ripgrep or grep for TODO scanning")
+      vim.health.error("Neither ripgrep nor grep found", "Install ripgrep or grep for scanning")
     end
   end
 
   -- Check plugin initialization
-  local todos = require("todos")
-  if todos._initialized then
+  local remind_meh = require("remind-meh")
+  if remind_meh._initialized then
     vim.health.ok("Plugin initialized")
   else
     vim.health.warn(
       "Plugin not initialized",
-      'Call require("todos").setup() in your config'
+      'Call require("remind-meh").setup() in your config'
     )
   end
 
   -- Check configuration
-  local config = require("todos.config")
+  local config = require("remind-meh.config")
   local opts = config.get()
 
   if opts.keywords and next(opts.keywords) then

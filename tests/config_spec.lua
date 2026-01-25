@@ -1,5 +1,5 @@
 describe("config", function()
-  local config = require("todos.config")
+  local config = require("remind-meh.config")
 
   before_each(function()
     -- Reset config state

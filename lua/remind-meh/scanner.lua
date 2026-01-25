@@ -1,6 +1,6 @@
 local M = {}
 
-local config = require("todos.config")
+local config = require("remind-meh.config")
 
 M.cache = {
   results = {},

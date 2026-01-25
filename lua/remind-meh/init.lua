@@ -1,9 +1,9 @@
 local M = {}
 
-local config = require("todos.config")
-local highlights = require("todos.highlights")
-local scanner = require("todos.scanner")
-local ui = require("todos.ui")
+local config = require("remind-meh.config")
+local highlights = require("remind-meh.highlights")
+local scanner = require("remind-meh.scanner")
+local ui = require("remind-meh.ui")
 
 M._initialized = false
 
@@ -96,7 +96,7 @@ function M.insert_todo()
 end
 
 function M.input_todo()
-  local input = require("todos.input")
+  local input = require("remind-meh.input")
   input.open()
 end
 
@@ -118,7 +118,7 @@ function M.setup(opts)
   if cfg.keymap then
     vim.keymap.set("n", cfg.keymap, function()
       M.toggle()
-    end, { desc = "Toggle TODO list", silent = true })
+    end, { desc = "Toggle reminder list", silent = true })
   end
 
   if cfg.insert_keymap then
@@ -177,7 +177,7 @@ function M.get_todos()
 end
 
 function M.statusline()
-  local statusline = require("todos.statusline")
+  local statusline = require("remind-meh.statusline")
   return statusline.get_status()
 end
 

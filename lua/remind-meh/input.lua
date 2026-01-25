@@ -1,6 +1,6 @@
 local M = {}
 
-local config = require("todos.config")
+local config = require("remind-meh.config")
 
 local state = {
   buf = nil,
@@ -10,8 +10,8 @@ local state = {
 }
 
 local function get_username()
-  local todos = require("todos")
-  return todos.get_username()
+  local remind_meh = require("remind-meh")
+  return remind_meh.get_username()
 end
 
 local function get_comment_prefix(bufnr)
@@ -111,7 +111,7 @@ function M.open()
     col = col,
     style = "minimal",
     border = opts.window and opts.window.border or "rounded",
-    title = " TODO Input ",
+    title = " Reminder Input ",
     title_pos = "center",
   })
 

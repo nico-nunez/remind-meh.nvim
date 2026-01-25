@@ -13,4 +13,4 @@ local plugin_path = vim.fn.fnamemodify(vim.fn.expand("<sfile>:p:h"), ":h")
 vim.opt.runtimepath:append(plugin_path)
 
 -- Load plugin
-vim.cmd("runtime plugin/todos.lua")
+vim.cmd("runtime plugin/remind-meh.lua")

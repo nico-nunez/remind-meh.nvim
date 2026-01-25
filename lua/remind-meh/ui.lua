@@ -1,7 +1,7 @@
 local M = {}
 
-local config = require("todos.config")
-local scanner = require("todos.scanner")
+local config = require("remind-meh.config")
+local scanner = require("remind-meh.scanner")
 
 M.state = {
   win = nil,
@@ -45,11 +45,11 @@ local function format_line(item, cfg)
 end
 
 local function apply_line_highlights(buf, results, cfg)
-  local ns = vim.api.nvim_create_namespace("todos_ui")
+  local ns = vim.api.nvim_create_namespace("remind_meh_ui")
   vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
 
   for i, item in ipairs(results) do
-    local hl_group = "Todos" .. item.keyword:sub(1, 1) .. item.keyword:sub(2):lower()
+    local hl_group = "RemindMeh" .. item.keyword:sub(1, 1) .. item.keyword:sub(2):lower()
     vim.api.nvim_buf_add_highlight(buf, ns, hl_group, i - 1, 0, 3)
     vim.api.nvim_buf_add_highlight(buf, ns, hl_group, i - 1, 3, 3 + #item.keyword + 2)
   end
@@ -68,7 +68,7 @@ local function render(results)
   end
 
   if #lines == 0 then
-    lines = { "  No TODOs found" }
+    lines = { "  No reminders found" }
   end
 
   vim.api.nvim_buf_set_option(M.state.buf, "modifiable", true)
@@ -134,12 +134,12 @@ function M.update_title()
 
   local total = #M.state.results
   local shown = #M.state.filtered_results
-  local title = " TODOs "
+  local title = " Reminders "
 
   if M.state.current_filter then
     title = string.format(" %s (%d/%d) ", M.state.current_filter, shown, total)
   else
-    title = string.format(" TODOs (%d) ", total)
+    title = string.format(" Reminders (%d) ", total)
   end
 
   vim.api.nvim_win_set_config(M.state.win, {
@@ -171,7 +171,7 @@ function M.open(results)
 
   M.state.buf = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_option(M.state.buf, "bufhidden", "wipe")
-  vim.api.nvim_buf_set_option(M.state.buf, "filetype", "todos")
+  vim.api.nvim_buf_set_option(M.state.buf, "filetype", "remind-meh")
 
   M.state.win = vim.api.nvim_open_win(M.state.buf, true, {
     relative = "editor",
@@ -181,12 +181,12 @@ function M.open(results)
     col = dims.col,
     style = "minimal",
     border = cfg.window.border,
-    title = " TODOs ",
+    title = " Reminders ",
     title_pos = "center",
   })
 
   vim.api.nvim_win_set_option(M.state.win, "cursorline", true)
-  vim.api.nvim_win_set_option(M.state.win, "winhighlight", "CursorLine:TodosCursorLine,FloatBorder:TodosWindowBorder")
+  vim.api.nvim_win_set_option(M.state.win, "winhighlight", "CursorLine:RemindMehCursorLine,FloatBorder:RemindMehWindowBorder")
 
   setup_keymaps(M.state.buf)
 

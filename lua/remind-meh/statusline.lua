@@ -1,7 +1,7 @@
 local M = {}
 
-local scanner = require("todos.scanner")
-local config = require("todos.config")
+local scanner = require("remind-meh.scanner")
+local config = require("remind-meh.config")
 
 M.cache = {
   status = "",
@@ -96,14 +96,14 @@ function M.refresh()
 end
 
 local function setup_refresh_autocmd()
-  local group = vim.api.nvim_create_augroup("TodosStatusline", { clear = true })
+  local group = vim.api.nvim_create_augroup("RemindMehStatusline", { clear = true })
 
   vim.api.nvim_create_autocmd("BufWritePost", {
     group = group,
     callback = function()
       M.refresh()
     end,
-    desc = "Refresh TODOs statusline on save",
+    desc = "Refresh remind-meh statusline on save",
   })
 end
 

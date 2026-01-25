@@ -1,6 +1,6 @@
 describe("scanner", function()
-  local scanner = require("todos.scanner")
-  local config = require("todos.config")
+  local scanner = require("remind-meh.scanner")
+  local config = require("remind-meh.config")
 
   before_each(function()
     config.setup({})

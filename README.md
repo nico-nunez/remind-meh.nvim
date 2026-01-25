@@ -1,17 +1,19 @@
-# todos.nvim
+# remind-meh.nvim
 
 A fast, minimal Neovim plugin for tracking TODO comments in your codebase.
+
+*"I'll get to it... meh, maybe later."*
 
 ## Features
 
 - **Fast scanning** - Uses ripgrep when available (falls back to grep)
-- **Floating window UI** - Browse and jump to TODOs with a centered popup
+- **Floating window UI** - Browse and jump to reminders with a centered popup
 - **Keyword filtering** - Filter by TODO, FIXME, BUG, HACK, NOTE, XXX
 - **Inline TODO insertion** - Insert TODOs at cursor with proper comment syntax
 - **Multi-line input** - Popup window for longer TODO descriptions
 - **Syntax highlighting** - Highlights TODO keywords in your buffers
 - **Theme integration** - Adapts colors to your colorscheme (`theme = "auto"`)
-- **Statusline integration** - Show TODO counts in your statusline
+- **Statusline integration** - Show reminder counts in your statusline
 - **Async operations** - Non-blocking scans for large codebases
 
 ## Requirements
@@ -25,9 +27,9 @@ A fast, minimal Neovim plugin for tracking TODO comments in your codebase.
 
 ```lua
 {
-  "nico/todos.nvim",
+  "nico/remind-meh.nvim",
   config = function()
-    require("todos").setup()
+    require("remind-meh").setup()
   end,
 }
 ```
@@ -36,9 +38,9 @@ A fast, minimal Neovim plugin for tracking TODO comments in your codebase.
 
 ```lua
 use {
-  "nico/todos.nvim",
+  "nico/remind-meh.nvim",
   config = function()
-    require("todos").setup()
+    require("remind-meh").setup()
   end,
 }
 ```
@@ -46,10 +48,10 @@ use {
 ### vim-plug
 
 ```vim
-Plug 'nico/todos.nvim'
+Plug 'nico/remind-meh.nvim'
 
 " In your init.lua or after/plugin:
-lua require("todos").setup()
+lua require("remind-meh").setup()
 ```
 
 ## Configuration
@@ -57,7 +59,7 @@ lua require("todos").setup()
 Default configuration:
 
 ```lua
-require("todos").setup({
+require("remind-meh").setup({
   -- Keywords to scan for (with colors and icons)
   keywords = {
     TODO  = { color = "#FFFF00", icon = "" },
@@ -81,11 +83,11 @@ require("todos").setup({
     "target",
   },
 
-  -- Auto-open TODO list on startup if TODOs are found
+  -- Auto-open reminder list on startup if reminders are found
   auto_open = true,
 
   -- Keymaps (set to false to disable)
-  keymap = "<leader>tl",        -- Toggle TODO list
+  keymap = "<leader>tl",        -- Toggle reminder list
   insert_keymap = "<leader>ti", -- Insert TODO at cursor
   input_keymap = "<leader>tw",  -- Open multi-line TODO input
   next_keymap = "<leader>tn",   -- Jump to next TODO in buffer
@@ -111,7 +113,7 @@ require("todos").setup({
 Set `theme = "auto"` to use colors from your colorscheme:
 
 ```lua
-require("todos").setup({
+require("remind-meh").setup({
   theme = "auto",
 })
 ```
@@ -122,14 +124,14 @@ This maps keywords to diagnostic/comment highlight groups for consistent theming
 
 | Command | Description |
 |---------|-------------|
-| `:Todos` | Open TODO list |
-| `:TodosToggle` | Toggle TODO list |
-| `:TodosClose` | Close TODO list |
-| `:TodosRefresh` | Refresh TODO list |
-| `:TodosInsert` | Insert TODO at cursor |
-| `:TodosInput` | Open multi-line TODO input |
-| `:TodosNext` | Jump to next TODO in buffer |
-| `:TodosPrev` | Jump to previous TODO in buffer |
+| `:RemindMeh` | Open reminder list |
+| `:RemindMehToggle` | Toggle reminder list |
+| `:RemindMehClose` | Close reminder list |
+| `:RemindMehRefresh` | Refresh reminder list |
+| `:RemindMehInsert` | Insert TODO at cursor |
+| `:RemindMehInput` | Open multi-line TODO input |
+| `:RemindMehNext` | Jump to next TODO in buffer |
+| `:RemindMehPrev` | Jump to previous TODO in buffer |
 
 ## Keymaps
 
@@ -137,17 +139,17 @@ This maps keywords to diagnostic/comment highlight groups for consistent theming
 
 | Keymap | Action |
 |--------|--------|
-| `<leader>tl` | Toggle TODO list |
+| `<leader>tl` | Toggle reminder list |
 | `<leader>ti` | Insert TODO at cursor |
 | `<leader>tw` | Open multi-line TODO input window |
 | `<leader>tn` | Jump to next TODO in buffer |
 | `<leader>tp` | Jump to previous TODO in buffer |
 
-### TODO List Window
+### Reminder List Window
 
 | Key | Action |
 |-----|--------|
-| `<CR>` | Jump to TODO location |
+| `<CR>` | Jump to location |
 | `f` | Filter by keyword |
 | `r` | Refresh list |
 | `q` / `<Esc>` | Close window |
@@ -162,17 +164,17 @@ This maps keywords to diagnostic/comment highlight groups for consistent theming
 
 ## Statusline Integration
 
-Add TODO counts to your statusline:
+Add reminder counts to your statusline:
 
 ```lua
 -- Basic usage (returns formatted string like " 5  2  1")
-require("todos").statusline()
+require("remind-meh").statusline()
 
 -- Detailed format (returns "TODO: 5 | FIXME: 2 | BUG: 1")
-require("todos.statusline").get_status_detailed()
+require("remind-meh.statusline").get_status_detailed()
 
 -- Just the count
-require("todos.statusline").get_count()
+require("remind-meh.statusline").get_count()
 ```
 
 ### lualine.nvim example
@@ -181,7 +183,7 @@ require("todos.statusline").get_count()
 require("lualine").setup({
   sections = {
     lualine_x = {
-      { function() return require("todos").statusline() end },
+      { function() return require("remind-meh").statusline() end },
     },
   },
 })
@@ -190,35 +192,35 @@ require("lualine").setup({
 ## API
 
 ```lua
-local todos = require("todos")
+local remind_meh = require("remind-meh")
 
 -- UI
-todos.open()           -- Open TODO list
-todos.close()          -- Close TODO list
-todos.toggle()         -- Toggle TODO list
-todos.refresh()        -- Refresh TODO list
-todos.is_open()        -- Check if window is open
+remind_meh.open()           -- Open reminder list
+remind_meh.close()          -- Close reminder list
+remind_meh.toggle()         -- Toggle reminder list
+remind_meh.refresh()        -- Refresh reminder list
+remind_meh.is_open()        -- Check if window is open
 
 -- Scanning
-todos.scan()           -- Synchronous scan (returns results)
-todos.scan_async(cb)   -- Async scan (calls cb with results)
-todos.get_todos()      -- Get cached results
+remind_meh.scan()           -- Synchronous scan (returns results)
+remind_meh.scan_async(cb)   -- Async scan (calls cb with results)
+remind_meh.get_todos()      -- Get cached results
 
 -- Insertion
-todos.insert_todo()    -- Insert TODO at cursor
-todos.input_todo()     -- Open multi-line input window
+remind_meh.insert_todo()    -- Insert TODO at cursor
+remind_meh.input_todo()     -- Open multi-line input window
 
 -- Navigation
-todos.next_todo()      -- Jump to next TODO in buffer
-todos.prev_todo()      -- Jump to previous TODO in buffer
+remind_meh.next_todo()      -- Jump to next TODO in buffer
+remind_meh.prev_todo()      -- Jump to previous TODO in buffer
 
 -- Statusline
-todos.statusline()     -- Get formatted status string
+remind_meh.statusline()     -- Get formatted status string
 ```
 
 ## Health Check
 
-Run `:checkhealth todos` to verify your setup.
+Run `:checkhealth remind-meh` to verify your setup.
 
 ## Development
 

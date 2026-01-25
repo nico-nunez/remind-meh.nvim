@@ -1,6 +1,6 @@
 local M = {}
 
-local config = require("todos.config")
+local config = require("remind-meh.config")
 
 local theme_map = {
   TODO = { hl = "@comment.todo", fallback = "#FFFF00" },
@@ -32,7 +32,7 @@ function M.setup()
 
   for keyword, settings in pairs(opts.keywords) do
     local color = resolve_color(keyword, settings, use_theme)
-    local hl_group = "Todos" .. keyword:sub(1, 1) .. keyword:sub(2):lower()
+    local hl_group = "RemindMeh" .. keyword:sub(1, 1) .. keyword:sub(2):lower()
     vim.api.nvim_set_hl(0, hl_group, {
       fg = color,
       bold = true,
@@ -48,24 +48,24 @@ function M.setup()
     -- })
   end
 
-  vim.api.nvim_set_hl(0, "TodosWindowTitle", {
+  vim.api.nvim_set_hl(0, "RemindMehWindowTitle", {
     fg = "#7DCFFF",
     bold = true,
   })
 
-  vim.api.nvim_set_hl(0, "TodosWindowBorder", {
+  vim.api.nvim_set_hl(0, "RemindMehWindowBorder", {
     fg = "#565f89",
   })
 
-  vim.api.nvim_set_hl(0, "TodosCursorLine", {
+  vim.api.nvim_set_hl(0, "RemindMehCursorLine", {
     bg = "#2a2e3f",
   })
 
-  vim.api.nvim_set_hl(0, "TodosFile", {
+  vim.api.nvim_set_hl(0, "RemindMehFile", {
     fg = "#9ece6a",
   })
 
-  vim.api.nvim_set_hl(0, "TodosLineNr", {
+  vim.api.nvim_set_hl(0, "RemindMehLineNr", {
     fg = "#565f89",
   })
 end
@@ -74,14 +74,14 @@ function M.apply_to_buffer(bufnr)
   local opts = config.get()
 
   for keyword, _ in pairs(opts.keywords) do
-    local hl_group = "Todos" .. keyword:sub(1, 1) .. keyword:sub(2):lower()
+    local hl_group = "RemindMeh" .. keyword:sub(1, 1) .. keyword:sub(2):lower()
     local pattern = [[\v]] .. keyword .. [[(\(.*\))?:?]]
     vim.fn.matchadd(hl_group, pattern, 10, -1, { window = vim.api.nvim_get_current_win() })
   end
 end
 
 function M.setup_buffer_autocmd()
-  local group = vim.api.nvim_create_augroup("TodosHighlight", { clear = true })
+  local group = vim.api.nvim_create_augroup("RemindMehHighlight", { clear = true })
 
   vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
     group = group,
