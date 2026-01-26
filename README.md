@@ -7,6 +7,7 @@ A fast, minimal Neovim plugin for tracking TODO comments in your codebase.
 ## Features
 
 - **Fast scanning** - Uses ripgrep when available (falls back to grep)
+- **Accurate detection** - Tree-sitter validation ensures only comments are matched
 - **Floating window UI** - Browse and jump to reminders with a centered popup
 - **Keyword filtering** - Filter by TODO, FIXME, BUG, HACK, NOTE, XXX
 - **Inline TODO insertion** - Insert TODOs at cursor with proper comment syntax
@@ -18,8 +19,9 @@ A fast, minimal Neovim plugin for tracking TODO comments in your codebase.
 
 ## Requirements
 
-- Neovim >= 0.9
+- Neovim >= 0.10
 - [ripgrep](https://github.com/BurntSushi/ripgrep) (recommended, falls back to grep)
+- Tree-sitter parsers for your languages (for accurate mode)
 
 ## Installation
 
@@ -105,6 +107,11 @@ require("remind-meh").setup({
     height = 0.5,   -- 50% of editor height
     border = "rounded",
   },
+
+  -- Scanner settings
+  scanner = {
+    mode = "accurate",  -- "accurate" | "fast"
+  },
 })
 ```
 
@@ -119,6 +126,23 @@ require("remind-meh").setup({
 ```
 
 This maps keywords to diagnostic/comment highlight groups for consistent theming.
+
+### Scanner Mode
+
+The scanner has two modes:
+
+- **`"accurate"`** (default) - Uses tree-sitter to validate that matches are inside comments. Filters out false positives like `const foo = "TODO"`.
+- **`"fast"`** - Raw ripgrep/grep results without validation. Faster on very large codebases but may include non-comment matches.
+
+```lua
+require("remind-meh").setup({
+  scanner = {
+    mode = "fast",  -- Skip tree-sitter validation
+  },
+})
+```
+
+For languages without tree-sitter support, matches are included regardless of mode.
 
 ## Commands
 
@@ -183,11 +207,18 @@ require("remind-meh.statusline").get_count()
 require("lualine").setup({
   sections = {
     lualine_x = {
-      { function() return require("remind-meh").statusline() end },
+      function() return require("remind-meh").statusline() end,
+      "encoding",
+      "fileformat",
+      "filetype",
     },
   },
 })
 ```
+
+> **Note:** Defining `sections.lualine_x` overrides lualine's defaults for that section.
+> The example above includes `encoding`, `fileformat`, and `filetype` to preserve
+> common defaults. Adjust based on what you want displayed.
 
 ## API
 

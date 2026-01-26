@@ -33,6 +33,9 @@ M.defaults = {
     height = 0.5,
     border = "rounded",
   },
+  scanner = {
+    mode = "accurate", -- "accurate" (tree-sitter validation) | "fast" (raw ripgrep)
+  },
 }
 
 M.options = {}

@@ -1,6 +1,7 @@
 local M = {}
 
 local config = require("remind-meh.config")
+local validator = require("remind-meh.validator")
 
 M.cache = {
   results = {},
@@ -104,6 +105,8 @@ function M.scan(opts)
     end
   end
 
+  results = validator.validate(results)
+
   M.cache.results = results
   M.cache.last_scan = vim.loop.now()
 
@@ -152,6 +155,8 @@ function M.scan_async(callback, opts)
           end
         end
       end
+
+      results = validator.validate(results)
 
       M.cache.results = results
       M.cache.last_scan = vim.loop.now()
