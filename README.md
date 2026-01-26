@@ -89,11 +89,11 @@ require("remind-meh").setup({
   auto_open = true,
 
   -- Keymaps (set to false to disable)
-  keymap = "<leader>tl",        -- Toggle reminder list
+  keymap = "<leader>rl",        -- Toggle reminder list
   insert_keymap = "<leader>ti", -- Insert TODO at cursor
   input_keymap = "<leader>tw",  -- Open multi-line TODO input
-  next_keymap = "<leader>tn",   -- Jump to next TODO in buffer
-  prev_keymap = "<leader>tp",   -- Jump to previous TODO in buffer
+  next_keymap = "<leader>rn",   -- Jump to next TODO in buffer
+  prev_keymap = "<leader>rp",   -- Jump to previous TODO in buffer
 
   -- Username for TODO attribution (auto-detected from git or $USER)
   user = nil,
@@ -163,11 +163,11 @@ For languages without tree-sitter support, matches are included regardless of mo
 
 | Keymap | Action |
 |--------|--------|
-| `<leader>tl` | Toggle reminder list |
+| `<leader>rl` | Toggle reminder list |
 | `<leader>ti` | Insert TODO at cursor |
 | `<leader>tw` | Open multi-line TODO input window |
-| `<leader>tn` | Jump to next TODO in buffer |
-| `<leader>tp` | Jump to previous TODO in buffer |
+| `<leader>rn` | Jump to next TODO in buffer |
+| `<leader>rp` | Jump to previous TODO in buffer |
 
 ### Reminder List Window
 

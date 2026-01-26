@@ -49,9 +49,18 @@ local function apply_line_highlights(buf, results, cfg)
   vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
 
   for i, item in ipairs(results) do
-    local hl_group = "RemindMeh" .. item.keyword:sub(1, 1) .. item.keyword:sub(2):lower()
-    vim.api.nvim_buf_add_highlight(buf, ns, hl_group, i - 1, 0, 3)
-    vim.api.nvim_buf_add_highlight(buf, ns, hl_group, i - 1, 3, 3 + #item.keyword + 2)
+    local keyword_cfg = cfg.keywords[item.keyword]
+    local hl_group = keyword_cfg and keyword_cfg.hl_group
+        or ("RemindMeh" .. item.keyword:sub(1, 1) .. item.keyword:sub(2):lower())
+
+    vim.api.nvim_buf_set_extmark(buf, ns, i - 1, 0, {
+      end_col = 3,
+      hl_group = hl_group,
+    })
+    vim.api.nvim_buf_set_extmark(buf, ns, i - 1, 3, {
+      end_col = 3 + #item.keyword + 2,
+      hl_group = hl_group,
+    })
   end
 end
 
@@ -71,9 +80,9 @@ local function render(results)
     lines = { "  No reminders found" }
   end
 
-  vim.api.nvim_buf_set_option(M.state.buf, "modifiable", true)
+  vim.api.nvim_set_option_value("modifiable", true, { buf = M.state.buf })
   vim.api.nvim_buf_set_lines(M.state.buf, 0, -1, false, lines)
-  vim.api.nvim_buf_set_option(M.state.buf, "modifiable", false)
+  vim.api.nvim_set_option_value("modifiable", false, { buf = M.state.buf })
 
   if #results > 0 then
     apply_line_highlights(M.state.buf, results, cfg)
@@ -170,8 +179,8 @@ function M.open(results)
   local dims = get_window_dimensions()
 
   M.state.buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_option(M.state.buf, "bufhidden", "wipe")
-  vim.api.nvim_buf_set_option(M.state.buf, "filetype", "remind-meh")
+  vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = M.state.buf })
+  vim.api.nvim_set_option_value("filetype", "remind-meh", { buf = M.state.buf })
 
   M.state.win = vim.api.nvim_open_win(M.state.buf, true, {
     relative = "editor",
@@ -185,8 +194,9 @@ function M.open(results)
     title_pos = "center",
   })
 
-  vim.api.nvim_win_set_option(M.state.win, "cursorline", true)
-  vim.api.nvim_win_set_option(M.state.win, "winhighlight", "CursorLine:RemindMehCursorLine,FloatBorder:RemindMehWindowBorder")
+  vim.api.nvim_set_option_value("cursorline", true, { win = M.state.win })
+  vim.api.nvim_set_option_value("winhighlight",
+    "CursorLine:RemindMehCursorLine,FloatBorder:RemindMehWindowBorder", { win = M.state.win })
 
   setup_keymaps(M.state.buf)
 

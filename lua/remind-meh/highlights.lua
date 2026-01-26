@@ -2,6 +2,9 @@ local M = {}
 
 local config = require("remind-meh.config")
 
+-- Namespace for extmarks (RemindMeh::extmarks, if you will)
+local ns = vim.api.nvim_create_namespace("RemindMeh")
+
 local theme_map = {
   TODO = { hl = "@comment.todo", fallback = "#FFFF00" },
   FIXME = { hl = "DiagnosticError", fallback = "#FF6B6B" },
@@ -71,19 +74,72 @@ function M.setup()
 end
 
 function M.apply_to_buffer(bufnr)
+  -- Clear existing extmarks for this buffer
+  vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+
   local opts = config.get()
 
-  for keyword, _ in pairs(opts.keywords) do
-    local hl_group = "RemindMeh" .. keyword:sub(1, 1) .. keyword:sub(2):lower()
-    local pattern = [[\v]] .. keyword .. [[(\(.*\))?:?]]
-    vim.fn.matchadd(hl_group, pattern, 10, -1, { window = vim.api.nvim_get_current_win() })
+  -- Try to get treesitter parser for this buffer
+  local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
+  if not ok or not parser then
+    return
+  end
+
+  -- Try to parse the query for comments
+  local query_ok, query = pcall(vim.treesitter.query.parse, parser:lang(), "(comment) @comment")
+  if not query_ok or not query then
+    return
+  end
+
+  local tree = parser:parse()[1]
+  if not tree then
+    return
+  end
+
+  -- Iterate through all comment nodes
+  for _, node in query:iter_captures(tree:root(), bufnr) do
+    local start_row, start_col, end_row, end_col = node:range()
+
+    -- Get the lines this comment spans
+    local lines = vim.api.nvim_buf_get_lines(bufnr, start_row, end_row + 1, false)
+
+    for i, line in ipairs(lines) do
+      local row = start_row + i - 1
+      local line_start_col = (i == 1) and start_col or 0
+      local line_end_col = (i == #lines) and end_col or #line
+
+      -- Only search within the comment portion of this line
+      local comment_text = line:sub(line_start_col + 1, line_end_col)
+
+      -- Check each keyword
+      for keyword, _ in pairs(opts.keywords) do
+        local search_start = 1
+        while true do
+          local match_start, match_end = comment_text:find(keyword, search_start, true)
+          if not match_start then
+            break
+          end
+
+          local hl_group = "RemindMeh" .. keyword:sub(1, 1) .. keyword:sub(2):lower()
+          local col = line_start_col + match_start - 1
+
+          vim.api.nvim_buf_set_extmark(bufnr, ns, row, col, {
+            end_row = row,
+            end_col = col + #keyword,
+            hl_group = hl_group,
+          })
+
+          search_start = match_end + 1
+        end
+      end
+    end
   end
 end
 
 function M.setup_buffer_autocmd()
   local group = vim.api.nvim_create_augroup("RemindMehHighlight", { clear = true })
 
-  vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+  vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave", "BufWritePost" }, {
     group = group,
     callback = function(ev)
       local ft = vim.bo[ev.buf].filetype

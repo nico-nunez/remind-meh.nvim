@@ -5,12 +5,13 @@ M.check = function()
 
   -- Check Neovim version
   local nvim_version = vim.version()
-  if nvim_version.major > 0 or (nvim_version.major == 0 and nvim_version.minor >= 9) then
-    vim.health.ok(string.format("Neovim version %d.%d.%d (>= 0.9 required)", nvim_version.major, nvim_version.minor, nvim_version.patch))
+  if nvim_version.major > 0 or (nvim_version.major == 0 and nvim_version.minor > 9) then
+    vim.health.ok(string.format("Neovim version %d.%d.%d (>= 0.10 required)", nvim_version.major, nvim_version.minor,
+      nvim_version.patch))
   else
     vim.health.error(
       string.format("Neovim version %d.%d.%d is too old", nvim_version.major, nvim_version.minor, nvim_version.patch),
-      "Update to Neovim 0.9 or later"
+      "Update to Neovim 0.10 or later"
     )
   end
 

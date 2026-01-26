@@ -19,11 +19,11 @@ describe("config", function()
 
     it("has default keymaps", function()
       local defaults = config.defaults
-      assert.equals("<leader>tl", defaults.keymap)
+      assert.equals("<leader>rl", defaults.keymap)
       assert.equals("<leader>ti", defaults.insert_keymap)
       assert.equals("<leader>tw", defaults.input_keymap)
-      assert.equals("<leader>tn", defaults.next_keymap)
-      assert.equals("<leader>tp", defaults.prev_keymap)
+      assert.equals("<leader>rn", defaults.next_keymap)
+      assert.equals("<leader>rp", defaults.prev_keymap)
     end)
 
     it("has window defaults", function()
@@ -40,7 +40,7 @@ describe("config", function()
       local opts = config.get()
       assert.is_false(opts.auto_open)
       -- Should still have defaults
-      assert.equals("<leader>tl", opts.keymap)
+      assert.equals("<leader>rl", opts.keymap)
     end)
 
     it("deep merges nested options", function()
