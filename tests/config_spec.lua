@@ -14,6 +14,8 @@ describe("config", function()
       assert.is_not_nil(defaults.keywords.HACK)
       assert.is_not_nil(defaults.keywords.NOTE)
       assert.is_not_nil(defaults.keywords.BUG)
+      assert.is_not_nil(defaults.keywords.WARNING)
+      assert.is_not_nil(defaults.keywords.IMPORTANT)
       assert.is_not_nil(defaults.keywords.XXX)
     end)
 
