@@ -85,14 +85,24 @@ function M.insert_todo()
     prefix = prefix .. " "
   end
 
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local current_line = vim.api.nvim_get_current_line()
+
+  -- 1. Extract indentation and build prefix
+  local indentation = current_line:match("^%s*")
   local user = get_username()
   local text = string.format("%sTODO(%s): ", prefix, user)
+  local formatted_text = indentation .. text
 
-  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-  local line = vim.api.nvim_get_current_line()
-  local new_line = line:sub(1, col) .. text .. line:sub(col + 1)
-  vim.api.nvim_set_current_line(new_line)
-  vim.api.nvim_win_set_cursor(0, { row, col + #text })
+  -- 2. Decide where to put it (current line if empty, otherwise above)
+  if current_line:match("%S") then
+    vim.api.nvim_buf_set_lines(0, row - 1, row - 1, false, { formatted_text })
+  else
+    vim.api.nvim_set_current_line(formatted_text)
+  end
+
+  vim.api.nvim_win_set_cursor(0, { row, #formatted_text })
+  vim.cmd("startinsert!")
 end
 
 function M.input_todo()
