@@ -11,6 +11,8 @@ local theme_map = {
   BUG = { hl = "DiagnosticError", fallback = "#F7768E" },
   HACK = { hl = "DiagnosticWarn", fallback = "#FF9E64" },
   NOTE = { hl = "DiagnosticInfo", fallback = "#7DCFFF" },
+  WARNING = { hl = "DiagnosticWarn", fallback = "#FF9E64" },
+  IMPORTANT = { hl = "DiagnosticError", fallback = "#FF6B6B" },
   XXX = { hl = "DiagnosticHint", fallback = "#BB9AF7" },
 }
 

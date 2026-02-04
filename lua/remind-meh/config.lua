@@ -7,6 +7,8 @@ M.defaults = {
     HACK = { color = "#FF9E64", icon = "" },
     NOTE = { color = "#7DCFFF", icon = "" },
     BUG = { color = "#F7768E", icon = "" },
+    WARNING = { color = "#FF9E64", icon = "" },
+    IMPORTANT = { color = "#F7768E", icon = "" },
     XXX = { color = "#BB9AF7", icon = "" },
   },
   exclude_dirs = {
