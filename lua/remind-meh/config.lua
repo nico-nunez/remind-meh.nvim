@@ -1,5 +1,8 @@
 local M = {}
 
+local KEYWORDS = require("remind-meh.constants").KEYWORDS
+
+---@type RemindMehConfig
 M.defaults = {
   keywords = {
     TODO = { color = "#FFFF00", icon = "" },
@@ -23,6 +26,9 @@ M.defaults = {
     "target",
   },
   auto_open = true,
+  default_filters = {
+    keywords = { KEYWORDS.TODO, KEYWORDS.FIXME, KEYWORDS.BUG }
+  },
   keymap = "<leader>rl",
   insert_keymap = "<leader>ti",
   input_keymap = "<leader>tw",
@@ -54,8 +60,19 @@ local function deep_merge(t1, t2)
   return result
 end
 
+---@param opts RemindMehConfig|nil
 function M.setup(opts)
-  M.options = deep_merge(M.defaults, opts or {})
+  opts = opts or {}
+  local user_exclude_dirs = opts.exclude_dirs or {}
+  M.options = deep_merge(M.defaults, opts)
+  -- Extend defaults with user-provided dirs rather than replacing them
+  local combined = vim.deepcopy(M.defaults.exclude_dirs)
+  for _, dir in ipairs(user_exclude_dirs) do
+    if not vim.tbl_contains(combined, dir) then
+      table.insert(combined, dir)
+    end
+  end
+  M.options.exclude_dirs = combined
   return M.options
 end
 

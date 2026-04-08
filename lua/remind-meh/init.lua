@@ -31,6 +31,7 @@ local function build_keyword_pattern()
   return [[\v(]] .. table.concat(keywords, "|") .. [[)\s*(\(.*\))?\s*:]]
 end
 
+---Jumps to the next TODO keyword in the current buffer, wrapping at end of file.
 function M.next_todo()
   local pattern = build_keyword_pattern()
   local saved_view = vim.fn.winsaveview()
@@ -53,6 +54,7 @@ function M.next_todo()
   vim.cmd("normal! zz")
 end
 
+---Jumps to the previous TODO keyword in the current buffer, wrapping at beginning of file.
 function M.prev_todo()
   local pattern = build_keyword_pattern()
   local saved_view = vim.fn.winsaveview()
@@ -75,6 +77,8 @@ function M.prev_todo()
   vim.cmd("normal! zz")
 end
 
+---Inserts a TODO comment at the current cursor position and enters insert mode.
+---Uses the buffer's commentstring. Inserts on the current line if empty, otherwise above it.
 function M.insert_todo()
   local comment = vim.bo.commentstring
   if comment == "" or comment == nil then
@@ -105,15 +109,21 @@ function M.insert_todo()
   vim.cmd("startinsert!")
 end
 
+---Opens the multi-line TODO input floating window.
 function M.input_todo()
   local input = require("remind-meh.input")
   input.open()
 end
 
+---Returns the username used for TODO attribution (git config user.name, $USER, or "user").
+---@return string
 function M.get_username()
   return get_username()
 end
 
+---Sets up the plugin, registers keymaps, and initializes highlights.
+---No-op if called more than once.
+---@param opts? RemindMehConfig
 function M.setup(opts)
   if M._initialized then
     return
@@ -158,43 +168,62 @@ function M.setup(opts)
   M._initialized = true
 end
 
+---Toggles the reminder list window open or closed.
 function M.toggle()
   ui.toggle()
 end
 
-function M.open()
-  ui.open()
+---Opens the reminder list window. Triggers an async scan if no results are passed.
+---@param results? ParsedResult[]
+function M.open(results)
+  ui.open(results)
 end
 
+---Closes the reminder list window.
 function M.close()
   ui.close()
 end
 
+---Re-scans and refreshes the reminder list window contents.
 function M.refresh()
   ui.refresh()
 end
 
+---Synchronously scans for TODO keywords and returns the results.
+---@param opts? ScanOpts
+---@return ParsedResult[]
 function M.scan(opts)
   return scanner.scan(opts)
 end
 
+---Asynchronously scans for TODO keywords and calls callback with results.
+---@param callback fun(results: ParsedResult[])
+---@param opts? ScanOpts
 function M.scan_async(callback, opts)
   scanner.scan_async(callback, opts)
 end
 
+---Returns the cached results from the last scan.
+---@return ParsedResult[]
 function M.get_todos()
   return scanner.get_cached()
 end
 
+---Returns a compact statusline string with TODO/FIXME/BUG counts and icons.
+---@return string
 function M.statusline()
   local statusline = require("remind-meh.statusline")
   return statusline.get_status()
 end
 
+---Returns whether the reminder list window is currently open.
+---@return boolean
 function M.is_open()
   return ui.is_open()
 end
 
+---Runs an async scan on startup and opens the window if any results are found.
+---Respects the `auto_open` config option.
 function M.auto_open()
   local cfg = config.get()
   if not cfg.auto_open then

@@ -83,6 +83,8 @@ local function cancel()
   close_window()
 end
 
+---Opens the multi-line TODO input floating window.
+---Inserts the result as a formatted comment block above the cursor line on submit.
 function M.open()
   if state.win and vim.api.nvim_win_is_valid(state.win) then
     vim.api.nvim_set_current_win(state.win)
@@ -137,6 +139,7 @@ function M.open()
   vim.cmd("startinsert")
 end
 
+---Closes the input window without submitting.
 function M.close()
   close_window()
 end

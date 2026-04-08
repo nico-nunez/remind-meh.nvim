@@ -45,6 +45,9 @@ local function format_status(results)
   return table.concat(parts, " ")
 end
 
+---Returns a compact statusline string with icon+count for TODO, FIXME, and BUG.
+---Uses a 30s cache; re-scans synchronously if cache is stale and no cached results exist.
+---@return string
 function M.get_status()
   local now = vim.loop.now()
 
@@ -63,6 +66,8 @@ function M.get_status()
   return M.cache.status
 end
 
+---Returns a verbose statusline string with icon, keyword name, and count for all keywords.
+---@return string
 function M.get_status_detailed()
   local results = scanner.get_cached()
   if #results == 0 then
@@ -83,11 +88,14 @@ function M.get_status_detailed()
   return table.concat(parts, " | ")
 end
 
+---Returns the total number of results from the last scan.
+---@return integer
 function M.get_count()
   local results = scanner.get_cached()
   return #results
 end
 
+---Asynchronously re-scans and updates the statusline cache.
 function M.refresh()
   scanner.scan_async(function(results)
     M.cache.status = format_status(results)

@@ -12,6 +12,8 @@ local function has_ripgrep()
   return vim.fn.executable("rg") == 1
 end
 
+---@param keywords KeywordConfigs
+---@return string
 local function build_pattern(keywords)
   local patterns = {}
   for keyword, _ in pairs(keywords) do
@@ -20,6 +22,9 @@ local function build_pattern(keywords)
   return table.concat(patterns, "|")
 end
 
+---@param exclude_dirs string[]
+---@param use_rg boolean
+---@return string[]
 local function build_exclude_args(exclude_dirs, use_rg)
   local args = {}
   for _, dir in ipairs(exclude_dirs) do
@@ -33,6 +38,10 @@ local function build_exclude_args(exclude_dirs, use_rg)
   return args
 end
 
+---Parses output string and check for keywords.
+---@param line string Output string to be parsed
+---@param keywords KeywordConfigs Keyword to search for
+---@return ParsedResult | nil result Returns ParsedResult or nil
 local function parse_result(line, keywords)
   local file, lnum, col, text = line:match("^(.+):(%d+):(%d+):(.*)$")
   if not file then
@@ -70,6 +79,9 @@ local function parse_result(line, keywords)
   }
 end
 
+---Synchronously scans for TODO keywords using rg or grep and returns parsed results.
+---@param opts? ScanOpts
+---@return ParsedResult[]
 function M.scan(opts)
   opts = opts or {}
   local cfg = config.get()
@@ -113,6 +125,9 @@ function M.scan(opts)
   return results
 end
 
+---Asynchronously scans for TODO keywords and calls callback with parsed results.
+---@param callback fun(results: ParsedResult[])
+---@param opts? ScanOpts
 function M.scan_async(callback, opts)
   opts = opts or {}
   local cfg = config.get()
@@ -170,10 +185,16 @@ function M.scan_async(callback, opts)
   })
 end
 
+---Returns the results from the most recent scan without re-scanning.
+---@return ParsedResult[]
 function M.get_cached()
   return M.cache.results
 end
 
+---Filters results to only those matching the given keyword. Returns all if keyword is nil.
+---@param results ParsedResult[]
+---@param keyword string|nil
+---@return ParsedResult[]
 function M.filter_by_keyword(results, keyword)
   if not keyword then
     return results
@@ -188,6 +209,9 @@ function M.filter_by_keyword(results, keyword)
   return filtered
 end
 
+---Returns a map of keyword -> count for the given results.
+---@param results ParsedResult[]
+---@return KeywordCounts
 function M.count_by_keyword(results)
   local counts = {}
   for _, item in ipairs(results) do

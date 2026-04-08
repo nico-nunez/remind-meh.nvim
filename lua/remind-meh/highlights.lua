@@ -31,6 +31,7 @@ local function resolve_color(keyword, settings, use_theme)
   return settings.color
 end
 
+---Registers all RemindMeh highlight groups based on current config and theme setting.
 function M.setup()
   local opts = config.get()
   local use_theme = opts.theme == "auto"
@@ -75,6 +76,9 @@ function M.setup()
   })
 end
 
+---Applies keyword highlight extmarks to all comment nodes in the given buffer.
+---Uses tree-sitter to find comment ranges; no-op if no parser is available.
+---@param bufnr integer
 function M.apply_to_buffer(bufnr)
   -- Clear existing extmarks for this buffer
   vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
@@ -138,6 +142,7 @@ function M.apply_to_buffer(bufnr)
   end
 end
 
+---Registers autocmds to re-apply highlights on BufEnter, InsertLeave, and BufWritePost.
 function M.setup_buffer_autocmd()
   local group = vim.api.nvim_create_augroup("RemindMehHighlight", { clear = true })
 

@@ -3,6 +3,7 @@ local M = {}
 local config = require("remind-meh.config")
 local scanner = require("remind-meh.scanner")
 
+---@type UIState
 M.state = {
   win = nil,
   buf = nil,
@@ -11,6 +12,7 @@ M.state = {
   current_filter = nil,
 }
 
+---@return WindowDimensions
 local function get_window_dimensions()
   local cfg = config.get()
   local editor_width = vim.o.columns
@@ -136,6 +138,7 @@ local function filter_prompt()
   end)
 end
 
+---Updates the floating window title to reflect current filter and result counts.
 function M.update_title()
   if not M.state.win or not vim.api.nvim_win_is_valid(M.state.win) then
     return
@@ -169,6 +172,9 @@ local function setup_keymaps(buf)
   end, opts)
 end
 
+---Opens the reminder list floating window. If already open, closes it instead (toggle).
+---Triggers an async scan if results are not provided.
+---@param results? ParsedResult[]
 function M.open(results)
   if M.state.win and vim.api.nvim_win_is_valid(M.state.win) then
     M.close()
@@ -215,6 +221,7 @@ function M.open(results)
   end
 end
 
+---Closes the reminder list floating window.
 function M.close()
   if M.state.win and vim.api.nvim_win_is_valid(M.state.win) then
     vim.api.nvim_win_close(M.state.win, true)
@@ -223,6 +230,7 @@ function M.close()
   M.state.buf = nil
 end
 
+---Toggles the reminder list window.
 function M.toggle()
   if M.state.win and vim.api.nvim_win_is_valid(M.state.win) then
     M.close()
@@ -231,6 +239,7 @@ function M.toggle()
   end
 end
 
+---Re-scans asynchronously and re-renders the window, preserving the active filter.
 function M.refresh()
   scanner.scan_async(function(results)
     M.state.results = results
@@ -244,6 +253,8 @@ function M.refresh()
   end)
 end
 
+---Returns true if the reminder list window is currently open and valid.
+---@return boolean
 function M.is_open()
   return M.state.win and vim.api.nvim_win_is_valid(M.state.win)
 end

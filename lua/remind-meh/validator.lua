@@ -106,6 +106,11 @@ local function is_in_comment(file, line, col, file_cache)
   return false
 end
 
+---Filters results to only those inside comment nodes using tree-sitter.
+---Falls back to including the result if language/parser is unavailable.
+---In "fast" scanner mode, returns results unchanged.
+---@param results ParsedResult[]
+---@return ParsedResult[]
 function M.validate(results)
   local cfg = config.get()
   if cfg.scanner.mode ~= "accurate" then
